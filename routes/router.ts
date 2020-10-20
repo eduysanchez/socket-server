@@ -1,36 +1,55 @@
 import { Router, Request, Response } from 'express';
+import Server from '../class/server';
 
 export const router = Router();
 
-router.get('/mensajes', (req: Request , res: Response) => {
+router.get('/message', (req: Request , res: Response) => {
     res.json({
         ok: true,
         mensaje: "Toda esta bien en Sion..."
     });
 });
 
-router.post('/mensajes', (req: Request , res: Response) => {
+router.post('/message', (req: Request , res: Response) => {
 
-    const cuerpo    = req.body.cuerpo;
-    const de        = req.body.de;
+    const msgBody    = req.body.msgBody;
+    const msgFrom        = req.body.msgFrom;
+
+    const payload = {
+        msgFrom,
+        msgBody
+    }
+
+    const server = Server.instance;
+
+    server.io.emit('newMessage', payload);
 
     res.json({
         ok: true,
-        cuerpo,
-        de
+        msgBody,
+        msgFrom
     });
 });
 
-router.post('/mensajes/:id', (req: Request , res: Response) => {
+router.post('/message/:id', (req: Request , res: Response) => {
 
-    const cuerpo    = req.body.cuerpo;
-    const de        = req.body.de;
+    const msgBody    = req.body.msgBody;
+    const msgFrom        = req.body.msgFrom;
     const id        = req.params.id;
+
+    const payload = {
+        msgFrom,
+        msgBody
+    }
+
+    const server = Server.instance;
+
+    server.io.in( id ).emit('messagePrivate', payload);
 
     res.json({
         ok: true,
-        cuerpo,
-        de,
+        msgBody,
+        msgFrom,
         id
     });
 });
