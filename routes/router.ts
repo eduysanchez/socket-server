@@ -1,5 +1,6 @@
 import { Router, Request, Response } from 'express';
 import Server from '../class/server';
+import { usersOnline } from '../sockets/sockets';
 
 export const router = Router();
 
@@ -53,5 +54,37 @@ router.post('/message/:id', (req: Request , res: Response) => {
         id
     });
 });
+
+//Get ID users
+router.get('/userslist', (req: Request , res: Response) => {
+
+    const server = Server.instance;
+
+    server.io.clients( (err: any, clients: string[]) => {
+        if(err){
+            return res.json({
+                ok: false,
+                err
+            });
+        }
+
+        res.json({
+            ok: true,
+            clients
+        });
+
+    });
+});
+
+//Get user names
+router.get('/userslist/details', (req: Request , res: Response) => {
+
+    res.json({
+        ok: true,
+        clients: usersOnline.getList()
+    });
+
+});
+
 
 export default router;

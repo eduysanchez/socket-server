@@ -9,7 +9,6 @@ export class UserList {
     //Add an user
     public add(user: User){
         this.list.push(user);
-        console.log(this.list);
         return user;
     }
 
@@ -21,14 +20,11 @@ export class UserList {
                 break;
             }   
         }
-
-        console.log('===== Actualizando Usuario =====');
-        console.log(this.list);
     }
 
     //Get list user
     public getList(){
-        return this.list;
+        return this.list.filter( user => user.name !== 'unknown');
     }
 
     //Get User

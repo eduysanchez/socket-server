@@ -26,7 +26,6 @@ export default class Server {
     }
 
     private listenSocket(){
-        console.log('Escuchando conecciones socket');
         this.io.on('connection', client => {
 
             //Connect client
@@ -35,11 +34,14 @@ export default class Server {
             //Config User
             sockets.configUser(client, this.io);
 
+            //Users Online
+            sockets.userslist(client, this.io);
+
             //Message
             sockets.message(client, this.io);
 
             //Desconectar    
-            sockets.disconnect(client);
+            sockets.disconnectClient(client, this.io);
 
         })
     }

@@ -12,12 +12,13 @@ export const connectClient = (client: Socket) => {
 
 }
 
-export const disconnect = (client: Socket) => {
+export const disconnectClient = (client: Socket, io: SocketIO.Server) => {
     
     client.on('disconnect', () => {
-
-        console.log('Cliente desconectado');
+        
         usersOnline.deleteUser(client.id);
+        
+        io.emit('usersOnline', usersOnline.getList() );
 
     });
 
@@ -26,7 +27,6 @@ export const disconnect = (client: Socket) => {
 //Listen message
 export const message = (client: Socket, io: SocketIO.Server) => {
         client.on('message', (payload: {msgFrom: string, msgBody: string}) => {
-            console.log('Mensaje recibido:', payload);
             io.emit('newMessage', payload);
         });
 }
@@ -36,11 +36,21 @@ export const configUser = (client: Socket, io: SocketIO.Server) => {
     client.on('configUser', (payload: {name: string}, callback: Function) => {
         
         usersOnline.updateName(client.id, payload.name);
+        
+        io.emit('usersOnline', usersOnline.getList() );
 
         callback({
-            ok: true,
-            message: `Usuario ${payload.name} configurado con exito.`
-        })
-        // io.emit('newMessage', payload);
+            ok: true
+        });
+
+    });
+}
+
+//Get users list
+export const userslist = (client: Socket, io: SocketIO.Server) => {
+    client.on('getUserslist', () => {
+        
+        io.to(client.id).emit('usersOnline', usersOnline.getList() );
+        
     });
 }
